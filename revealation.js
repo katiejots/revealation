@@ -38,7 +38,7 @@ page.open(url, function(status) {
         nextSlide(page);
     }
 
-  phantom.exit();
+    phantom.exit();
 });
 
 var processFragments = function(page, slideId) {
