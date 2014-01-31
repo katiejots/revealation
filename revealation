@@ -11,6 +11,9 @@ fi
 
 URL=$1
 
+command -v phantomjs >/dev/null 2>&1 || { echo >&2 "Revealation requires PhantomJS: please ensure it is installed and on your PATH"; exit 1; }
+command -v convert >/dev/null 2>&1 || { echo >&2 "Revealation requires ImageMagick's convert program: please ensure it is installed and on your PATH"; exit 1; }
+
 if [ ! -d "output" ]; then
     mkdir output
 fi
