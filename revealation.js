@@ -1,3 +1,8 @@
+/*
+ * PhantomJS script to crawl a Reveal.js slide deck and capture each fragment as a PNG. 
+ * Author: Katie Miller (codemiller)
+ */
+
 var page = require('webpage').create(),
     system = require('system');
 
