@@ -30,29 +30,29 @@ page.open(url, function(status) {
                            rollingLinks: false });
     });
 
-    for (var slidesToGo = true; slidesToGo; slidesToGo = !isLastSlide(page)) { 
+    for (var done = false; !done; done = isPresDone(page)) { 
         var slideIndices = getSlideIndices(page); 
-        var slideId = padWithZeroes(slideIndices.h) + '-' + padWithZeroes(slideIndices.v); 
+        var slideId = padWithZeroes(slideIndices.h) + '-' + padWithZeroes(slideIndices.v);
 
-        renderFrame(page, slideId + '-' + padWithZeroes(0));
-
-        if (hasFragments(page)) {
-            processFragments(page, slideId);
-        } 
-
-        nextSlide(page);
+        doRender(page, slideId); 
+        advancePres(page);
     }
 
     phantom.exit();
 });
 
-var processFragments = function(page, slideId) {
-    for (var fragmentsToGo = true; fragmentsToGo; fragmentsToGo = hasNextFragment(page)) {
+var advancePres = function(page) {
+    if (hasNextFragment(page)) {
         nextFragment(page);
-        //TODO Add back CSS transition handling code here
-        var fragmentId = getFragmentIndex(page);
-        renderFrame(page, slideId + '-' + padWithZeroes(fragmentId));
-    }   
+    } else {
+        nextSlide(page);
+    }
+}
+
+var doRender = function(page, slideId) {
+    //TODO: Detect if animation and capture accordingly
+    var fragmentId = getFragmentIndex(page);
+    renderFrame(page, slideId + '-' + padWithZeroes(fragmentId));
 }
 
 var renderFrame = function(page, id) {
@@ -63,20 +63,14 @@ var doEval = function(page, func) {
     return page.evaluate(func);
 } 
 
-var forceRepaint = function(page) {
-    doEval(page, function() { 
-        // Hack from http://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes
-        var curSlide = document.getElementsByClassName('present')[0];
-        curSlide.style.display = 'none';
-        curSlide.offsetHeight;
-        curSlide.style.display = 'block';
-    });
-}
-
 var isLastSlide = function(page) {
     return doEval(page, function() {
         return Reveal.isLastSlide();
     });
+}
+
+var isPresDone = function(page) {
+    return isLastSlide(page) && !hasFragments(page)
 }
 
 var hasFragments = function(page) {
@@ -122,7 +116,17 @@ var getSlideIndices = function(page) {
 }
 
 var getFragmentIndex = function(page) {
-    return getSlideIndices(page).f;
+    return getSlideIndices(page).f || 0;
+}
+
+var forceRepaint = function(page) {
+    doEval(page, function() { 
+        // Hack from http://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes
+        var curSlide = document.getElementsByClassName('present')[0];
+        curSlide.style.display = 'none';
+        curSlide.offsetHeight;
+        curSlide.style.display = 'block';
+    });
 }
 
 var padWithZeroes = function(num) {
