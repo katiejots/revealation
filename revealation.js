@@ -24,15 +24,13 @@ page.open(url, function(status) {
         phantom.exit(1);
     }
 
-    var configResult = page.evaluate(function() {
-        if (typeof(Reveal.configure) === "function") {
-            return Reveal.configure({ controls: false, 
-                                      transition: 'none',
-                                      rollingLinks: false });
-        }
-        return false;
+    testRevealVersion(page);
+
+    page.evaluate(function() {
+        Reveal.configure({ controls: false, 
+                           transition: 'none',
+                           rollingLinks: false });
     });
-    if (!configResult) { versionError(); }
 
     /* TODO This is causing funky results on fragment slides; commenting out for now.
     dims = getSlideDimensions(page);
@@ -114,14 +112,9 @@ var getSlideDimensions = function(page) {
 }
 
 var getAvailableFragments = function(page) {
-    var result = doEval(page, function() {
-        if (typeof(Reveal.availableFragments) === "function") {
-            return Reveal.availableFragments();
-        }
-        return false;
+    return doEval(page, function() {
+        return Reveal.availableFragments();
     });
-    if (result) { return result; }
-    versionError();
 }
 
 var getSlideIndices = function(page) {
@@ -200,7 +193,19 @@ var padWithZeroes = function(num) {
     return num;
 }
 
-var versionError = function() {
-    console.log("Sorry, the version of Reveal.js used in the presentation is too old for this tool. Please upgrade it and try again.");
-    phantom.exit(1);
+var testRevealVersion = function(page) {
+    var compatible = doEval(page, function() {
+        return typeof(Reveal.availableFragments) === "function"
+            && typeof(Reveal.configure) === "function"
+            && typeof(Reveal.getCurrentSlide) === "function"
+            && typeof(Reveal.getIndices) === "function"
+            && typeof(Reveal.isLastSlide) === "function"
+            && typeof(Reveal.next) === "function"
+            && typeof(Reveal.nextFragment) === "function";
+    });
+
+    if (!compatible) {
+        console.log("Sorry, the version of Reveal.js used in the presentation is too old for this tool. Please upgrade it and try again.");
+        phantom.exit(1);
+    }
 }
