@@ -26,10 +26,9 @@ If you want to review the slide images captured and remove any unwanted ones bef
 
 I am still working on this (feel free to fork the repo and send pull requests). Things I'd like to do include:
 
-- Figure out how to do proper fragment captures with a larger viewport size. At the moment, element size and placement go a bit haywire when this is enabled, so the output is currently set to the default small size.
-- Make it work with older versions of Reveal.js; currently this will only work with presentations using a clone of Reveal.js that includes API functions such as Reveal.configure and Reveal.availableFragments.
+- Investigate fragment rendering issues (could just be that presentations haven't finished loading when captures start; it's hard to test/fix this given https://github.com/ariya/phantomjs/issues/10832)
 - Improve the capture of CSS animations. I have done some preliminary work on this, but it's not working as well as I'd like yet.
 - Capture more than one frame of any included GIFs.
 - Capture CSS transitions on fragments (ones like 'grow' and 'shrink').
 - Have an output PDF with selectable text.
-
+- Make it work with older versions of Reveal.js; currently this will only work with presentations using a clone of Reveal.js that includes API functions such as Reveal.configure and Reveal.availableFragments.

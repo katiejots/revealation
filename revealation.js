@@ -195,9 +195,8 @@ page.open(url, function (status) {
                            rollingLinks: false });
     });
 
-    /* TODO This is causing funky results on fragment slides; commenting out for now.
     dims = getSlideDimensions(page);
-    page.viewportSize = { width: dims.width, height: dims.height }; */
+    page.viewportSize = { width: dims.width, height: dims.height };
 
     for (var done = false; !done; done = isPresDone(page)) { 
         var slideIndices = getSlideIndices(page); 
