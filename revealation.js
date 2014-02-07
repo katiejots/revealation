@@ -24,11 +24,15 @@ page.open(url, function(status) {
         phantom.exit(1);
     }
 
-    page.evaluate(function() {
-        Reveal.configure({ controls: false, 
-                           transition: 'none',
-                           rollingLinks: false });
+    var configResult = page.evaluate(function() {
+        if (typeof(Reveal.configure) === "function") {
+            return Reveal.configure({ controls: false, 
+                                      transition: 'none',
+                                      rollingLinks: false });
+        }
+        return false;
     });
+    if (!configResult) { versionError(); }
 
     /* TODO This is causing funky results on fragment slides; commenting out for now.
     dims = getSlideDimensions(page);
@@ -198,5 +202,5 @@ var padWithZeroes = function(num) {
 
 var versionError = function() {
     console.log("Sorry, the version of Reveal.js used in the presentation is too old for this tool. Please upgrade it and try again.");
-    phantom.exit();
+    phantom.exit(1);
 }
