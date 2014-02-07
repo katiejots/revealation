@@ -8,7 +8,7 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 - Install [PhantomJS](http://phantomjs.org) and make sure the executable is on your path 
 - Install [ImageMagick](http://www.imagemagick.org) and make sure the `convert` command is available on your path 
 
-## Fully Automated Process
+## Automated Process
 
 If you just want to convert the slide deck and don't care about removing any surplus slide captures, simply run the following command, replacing the URL with the URL of the desired target deck:
 
@@ -21,4 +21,15 @@ If you want to review the slide images captured and remove any unwanted ones bef
 - Run the command `phantomjs revealation.js http://revealurl.example.com`, replacing the URL with your own 
 - Look at the PNG files in the directory and delete any unwanted ones; every Reveal.js fragment will be captured
 - Run the command `convert *.png slides.pdf`
+
+## To Do
+
+I am still working on this (feel free to fork the repo and send pull requests). Things I'd like to do include:
+
+- Figure out how to do proper fragment captures with a larger viewport size. At the moment, element size and placement go a bit haywire when this is enabled, so the output is currently set to the default small size.
+- Make it work with older versions of Reveal.js; currently this will only work with presentations using a clone of Reveal.js that includes API functions such as Reveal.configure and Reveal.availableFragments.
+- Improve the capture of CSS animations. I have done some preliminary work on this, but it's not working as well as I'd like yet.
+- Capture more than one frame of any included GIFs.
+- Capture CSS transitions on fragments (ones like 'grow' and 'shrink').
+- Have an output PDF with selectable text.
 
