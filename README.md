@@ -6,7 +6,7 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 ## Prerequisites
 
 - Install [PhantomJS](http://phantomjs.org) and make sure the executable is on your path 
-- Install [ImageMagick](www.imagemagick.org) and make sure the `convert` command is available on your path 
+- Install [ImageMagick](http://www.imagemagick.org) and make sure the `convert` command is available on your path 
 
 ## Fully Automated Process
 
