@@ -76,7 +76,7 @@ var isLastSlide = function(page) {
 }
 
 var isPresDone = function(page) {
-    return isLastSlide(page) && !hasFragments(page)
+    return isLastSlide(page) && !hasNextFragment(page)
 }
 
 var hasFragments = function(page) {
