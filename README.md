@@ -32,7 +32,6 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 
 ## To Do
 
-- Fix PDF rendering - images are not sized correctly yet
 - Improve the capture of CSS animations
 - Capture more than one frame of any included GIFs
 - Capture CSS transitions on fragments (ones like 'grow' and 'shrink')

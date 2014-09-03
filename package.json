@@ -25,7 +25,8 @@
     "casper": "~0.1.1",
     "spooky": "~0.2.4",
     "pdfkit": "~0.6.3",
-    "minimist": "~1.1.0"
+    "minimist": "~1.1.0",
+    "image-size": "~0.3.2"
   },
   "private": true,
   "main": "server.js"

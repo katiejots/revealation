@@ -1,32 +1,43 @@
 var fs = require('fs');
 var path = require('path');
+var sizeOf = require('image-size');
 var PDFDocument = require('pdfkit');
 
 module.exports = function (targetDir, filename, format, callback) {
     console.log("Rendering PDF");
-    var doc = new PDFDocument({layout: 'landscape', size: 'A4'});
-    var stream = fs.createWriteStream(targetDir + '/' + filename + '.pdf')
-    doc.pipe(stream);
     fs.readdir(targetDir, function (err, files) { 
         if (err) {
             return callback(err);
         } 
-
-        var first = true;
+       
+        var doc, stream, width, height;
         for (var i = 0; i < files.length; i++) { 
             var file = files[i];
             if (path.extname(file) === '.' + format) {
-                // PDF initialised with one page
-                if (first) {
-                    first = false;
+                var filepath = targetDir + '/' + file;
+                if (!doc) {
+                    var res = sizeOf(filepath);
+                    var dpi = 300;
+                    width = calcPdfPoints(res.width || 960, dpi);  
+                    height = calcPdfPoints(res.height || 700, dpi);  
+                    doc = new PDFDocument({layout: 'landscape', margin: 0, size: [height, width]});
+                    stream = fs.createWriteStream(targetDir + '/' + filename + '.pdf');
+                    doc.pipe(stream);
                 } else {
                     doc.addPage();
                 }
-                //TODO Fix rendering properties
-                doc.image(targetDir + '/' + file, 0, 0);
+                doc.image(filepath, 0, 0, {fit: [width, height]});
             } 
         }
-        callback(null);
-        doc.end();
+        if (doc) {
+            callback(null);
+            doc.end();
+        } else {
+            callback(new Error('Build error'));
+        }
     });
+}
+
+var calcPdfPoints = function(res, dpi) {
+    return res / dpi * 72;
 }
