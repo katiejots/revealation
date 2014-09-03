@@ -11,6 +11,7 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 ## Install
 
 - `git clone git@github.com:codemiller/revealation.git`
+- `cd revealation`
 - `npm install --dependencies`
 
 ## Run 
