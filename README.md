@@ -8,6 +8,11 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 - Install NodeJS and make sure it is on your path
 - Install [PhantomJS](http://phantomjs.org) and make sure it is on your path 
 
+## Install
+
+- `git clone git@github.com:codemiller/revealation.git`
+- `npm install --dependencies`
+
 ## Run 
 
 `node revealation.js http://myrevealpres.com`
