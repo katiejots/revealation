@@ -5,30 +5,30 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 
 ## Prerequisites
 
-- Install [PhantomJS](http://phantomjs.org) and make sure the executable is on your path 
-- Install [ImageMagick](http://www.imagemagick.org) and make sure the `convert` command is available on your path 
+- Install NodeJS and make sure it is on your path
+- Install [PhantomJS](http://phantomjs.org) and make sure it is on your path 
 
-## Automated Process
+## Run 
 
-If you just want to convert the slide deck and don't care about removing any surplus slide captures, simply run the following command, replacing the URL with the URL of the desired target deck:
+`node revealation.js http://myrevealpres.com`
 
-    ./revealation http://revealurl.example.com
+## Options 
 
-## Manual Process 
-
-If you want to review the slide images captured and remove any unwanted ones before creating the PDF, do the following:
-
-- Run the command `phantomjs revealation.js http://revealurl.example.com`, replacing the URL with your own 
-- Look at the PNG files in the directory and delete any unwanted ones; every Reveal.js fragment will be captured
-- Run the command `convert *.png slides.pdf`
+- `--capture` Capture the slides, but do not render to PDF
+- `--build` Skip slide capture and build a PDF from images in the target directory 
+- `--target {dir}` Directory to write the images and PDF
+- `--output {filename}` Filename for the PDF (without an extension)
+- `--resolution {1024x768}` Resolution for viewport; if unspecified, tool will use the Reveal.js slide dimensions
+- `--quality {75}` Quality of images captured, from 0 to 100
+- `--format {png}` Format of images captured: png or jpeg
+- `--controls` Show the Reveal.js controls; defaults to false
+- `--maxindex {999}` Maximum to use for frame indices; defaults to 999
 
 ## To Do
 
-I am still working on this (feel free to fork the repo and send pull requests). Things I'd like to do include:
-
-- Investigate fragment rendering issues (could just be that presentations haven't finished loading when captures start; it's hard to test/fix this given https://github.com/ariya/phantomjs/issues/10832)
-- Improve the capture of CSS animations. I have done some preliminary work on this, but it's not working as well as I'd like yet.
-- Capture more than one frame of any included GIFs.
-- Capture CSS transitions on fragments (ones like 'grow' and 'shrink').
-- Have an output PDF with selectable text.
-- Make it work with older versions of Reveal.js; currently this will only work with presentations using a clone of Reveal.js that includes API functions such as Reveal.configure and Reveal.availableFragments.
+- Fix PDF rendering - images are not sized correctly yet
+- Improve the capture of CSS animations
+- Capture more than one frame of any included GIFs
+- Capture CSS transitions on fragments (ones like 'grow' and 'shrink')
+- Have an output PDF with selectable text
+- Make it work with older versions of Reveal.js

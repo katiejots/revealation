@@ -1,210 +1,78 @@
 /*
- * PhantomJS script to crawl a Reveal.js slide deck and capture each fragment as a PNG. 
+ * Tool to crawl a Reveal.js slide deck and capture each fragment to build a PDF.
  * Author: Katie Miller (codemiller)
  */
 
-var page = require('webpage').create(),
-    system = require('system');
+var fs = require('fs'),
+build = require ('./build.js'),
+capture = require ('./capture.js'),
+argv = require('minimist')(process.argv.slice(2)),
+url = argv._[0],
+mode,
+targetDir = argv.target || 'output',
+outputFilename = argv.output || 'presentation',
+resolution,
+imageQuality = argv.quality || 100,
+imageFormat = argv.format || 'png',
+showControls = argv.controls || false,
+maxIndex = argv.maxindex || 999;
 
-if (system.args.length < 2 || system.args.indexOf("--help") > -1) {
-    console.log('Pass the Reveal.js presentation URL as an argument, eg: phantomjs revealation.js http://lab.hakim.se/reveal-js\n\nOptionally, you can specify --captureAnimation to instruct Revealation to take extra frames of any CSS animations it detects (experimental), and/or add an integer argument to specify the maximum slide index to be used in frame ids (default 999)');
-    phantom.exit(1);
+if ((argv.capture != argv.build) && argv.capture) {
+    mode = 'capture';
+    console.log('Mode set to capture: capturing slides only');
+} else if ((argv.capture != argv.build) && argv.build) {
+    mode = 'build';
+    console.log('Mode set to build: building PDF only');
+} else {
+    mode = 'full';
 }
 
-var url = system.args[1];
-var captureAnimation = system.args.indexOf("--captureAnimation") > -1 || false;
-var intRegex = /^\d+$/;
-var maxSlideIndex = '999';
-if (intRegex.test(system.args[3])) { maxSlideIndex = system.args[3]; }
-if (intRegex.test(system.args[2])) { maxSlideIndex = system.args[2]; }
-
-var doEval = function (page, func) {
-    return page.evaluate(func);
-};
-
-var padWithZeroes = function (num) {
-    var numDigits = maxSlideIndex.toString().length;
-    if (num <= maxSlideIndex) {
-        num = (new Array(numDigits).join("0") + num).slice(-numDigits);
-    }
-    return num;
-};
-
-var getSlideDimensions = function (page) {
-    return doEval(page, function () {
-        return { width: Reveal.getConfig().width,
-                 height: Reveal.getConfig().height };
-    });
-};
-
-var getAvailableFragments = function (page) {
-    return doEval(page, function () {
-        return Reveal.availableFragments();
-    });
-};
-
-var getSlideIndices = function (page) {
-    return doEval(page, function () {
-        return Reveal.getIndices();
-    });
-};
-
-var getFragmentIndex = function (page) {
-    return getSlideIndices(page).f || 0;
-};
-
-var forceRepaint = function (page) {
-    doEval(page, function () {
-        // Hack from http://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes
-        var curSlide = document.getElementsByClassName('present')[0];
-        curSlide.style.display = 'none';
-        curSlide.offsetHeight;
-        curSlide.style.display = 'block';
-    });
-};
-
-var hasFragments = function (page) {
-    var fragments = getAvailableFragments(page);
-    return fragments.prev || fragments.next;
-};
-
-var hasNextFragment = function (page) {
-    var fragments = getAvailableFragments(page);
-    return fragments.next;
-};
-
-var nextSlide = function (page) {
-    doEval(page, function () {
-        Reveal.next();
-    });
-};
-
-var nextFragment = function (page) {
-    doEval(page, function () {
-        Reveal.nextFragment();
-    });
-    forceRepaint(page);
-};
-
-var isLastSlide = function (page) {
-    return doEval(page, function () {
-        return Reveal.isLastSlide();
-    });
-};
-
-var isPresDone = function (page) {
-    return isLastSlide(page) && !hasNextFragment(page);
-};
-
-var advancePres = function (page) {
-    if (hasNextFragment(page)) {
-        nextFragment(page);
-    } else {
-        nextSlide(page);
-    }
-};
-
-var getAnimation = function (page) {
-    return doEval(page, function () {
-        var fragments = Reveal.getCurrentSlide().getElementsByClassName("fragment");
-        for (var i = 0; i < fragments.length; i++) {
-            var aniName = window.getComputedStyle(fragments[i], null).getPropertyCSSValue("animation-name");
-            var aniDuration = window.getComputedStyle(fragments[i], null).getPropertyCSSValue("animation-duration");
-            var webkitAniName = window.getComputedStyle(fragments[i], null).getPropertyCSSValue("-webkit-animation-name");
-            var webkitAniDuration = window.getComputedStyle(fragments[i], null).getPropertyCSSValue("-webkit-animation-duration");
-            var classes = fragments[i].className;
-            if (classes.indexOf("revealation-captured" == -1) && //TODO Fix; not working as expected
-               ((aniName && aniName.cssText != "none") || (webkitAniName && webkitAniName.cssText != "none"))) {
-                fragments[i].className += " revealation-captured revealation-animation";
-               if (aniDuration && aniDuration.cssText) { return aniDuration.cssText; }
-               if (webkitAniDuration && webkitAniDuration.cssText) { return webkitAniDuration.cssText; }
-               return "2.5s"; 
-            }
+if (mode !== 'build') {
+    // Process command line arguments for capture
+    if (argv.resolution) {
+        var res = argv.resolution;
+        var pattern = /(\d+)x(\d+)/;
+        if (typeof res === 'string' && res.match(pattern)) {
+           var matches = res.match(pattern);
+           resolution = { 'width': matches[1], 'height': matches[2] }; 
+        } else {
+            console.log('Resolution must have format {height}x{width}');
+            process.exit(1);
         }
-        return false;
-    });
-};
+    }
 
-//TODO This doesn't work as expected yet. Also, it would be nice to capture CSS transitions and GIFs.
-var captureAnyAnimation = function (page, slideId, fragmentId) {
-    var duration = getAnimation(page);
-    if (duration) {
-        console.log("Capturing animation for fragment " + slideId + "-" + fragmentId);
-        var miliseconds = (duration.indexOf("ms") > -1) ? parseFloat(duration) : parseFloat(duration) * 1000; 
-        var seriesFrames = miliseconds / 250; 
-        for (var seriesId = 0; seriesId < seriesFrames; seriesId++) {
-            doEval(page, function () {
-                var animatedFragment = Reveal.getCurrentSlide().getElementsByClassName("revealation-animation")[0];
-                window.setTimeout(function () {
-                    if (animatedFragment) { animatedFragment.style.webkitAnimationPlayState = "paused"; }
-                }, 250); // Doesn't work without setTimeout, but changing time here doesn't seem to have any effect
-            });
-            renderFrame(page, slideId + '-' + fragmentId + '-' + padWithZeroes(seriesId));
-            doEval(page, function () {
-                var animatedFragment = Reveal.getCurrentSlide().getElementsByClassName("revealation-animation")[0];
-                if (animatedFragment) { animatedFragment.style.webkitAnimationPlayState = "running"; }
-            });
+    if (!url || (imageFormat !== 'png' && imageFormat !== 'jpeg') ||
+      maxIndex !== parseInt(maxIndex) ||
+      imageQuality !== parseInt(imageQuality)) {
+        console.log('Argument error\nExample use: node revealation.js http://myrevealpres.com --format jpeg');
+        process.exit(1);
+    }
+
+    fs.mkdir(targetDir, '0777', function (err) {
+       if (err && err.code != 'EEXIST') {
+           console.log('Directory ' + targetDir + ' could not be created');
+           process.exit(1);
+       } 
+    });
+}
+
+var builder = function () {
+    build(targetDir, outputFilename, imageFormat, function (err) {
+        if (err) {
+            console.log('Could not build PDF: ' + err);
+            process.exit(1);
+        }
+    });
+}
+
+if (mode !== 'build') {
+    capture(url, targetDir, resolution, imageQuality, imageFormat, showControls, maxIndex, function(err) {
+        if (err) {
+            console.log('Could not capture slides: ' + err);
+            process.exit(1);
         } 
-        doEval(page, function () {
-            var animatedFragment = Reveal.getCurrentSlide().getElementsByClassName("revealation-animation")[0];
-            animatedFragment.className = animatedFragment.className.replace(/\brevealation-animation\b/,"");
-        });
-    }
-};
-
-var doRender = function (page, slideId) {
-    var fragmentId = padWithZeroes(getFragmentIndex(page));
-    if (captureAnimation) {
-        captureAnyAnimation(page, slideId, fragmentId);
-    }
-    renderFrame(page, slideId + '-' + fragmentId);
-};
-
-var renderFrame = function (page, id) {
-    page.render('frame-' + id + '.png'); 
-};
-
-var testRevealVersion = function (page) {
-    var compatible = doEval(page, function () {
-        return typeof(Reveal.availableFragments) === "function"
-            && typeof(Reveal.configure) === "function"
-            && typeof(Reveal.getCurrentSlide) === "function"
-            && typeof(Reveal.getIndices) === "function"
-            && typeof(Reveal.isLastSlide) === "function"
-            && typeof(Reveal.next) === "function"
-            && typeof(Reveal.nextFragment) === "function";
+        builder();
     });
-
-    if (!compatible) {
-        console.log("Sorry, the version of Reveal.js used in the presentation is too old for this tool. Please upgrade it and try again.");
-        phantom.exit(1);
-    }
-};
-
-page.open(url, function (status) {
-    if (status !== "success") {
-        console.log('Unable to load Reveal.js presentation at URL: ' + url);
-        phantom.exit(1);
-    }
-
-    testRevealVersion(page);
-
-    page.evaluate(function () {
-        Reveal.configure({ controls: false, 
-                           transition: 'none',
-                           rollingLinks: false });
-    });
-
-    dims = getSlideDimensions(page);
-    page.viewportSize = { width: dims.width, height: dims.height };
-
-    for (var done = false; !done; done = isPresDone(page)) { 
-        var slideIndices = getSlideIndices(page); 
-        var slideId = padWithZeroes(slideIndices.h) + '-' + padWithZeroes(slideIndices.v);
-
-        doRender(page, slideId); 
-        advancePres(page);
-    }
-
-    phantom.exit();
-});
+} else {
+    builder();
+}
