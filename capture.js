@@ -5,7 +5,7 @@ try {
     var Spooky = require('../lib/spooky');
 }
 
-module.exports = function (url, targetDir, resolution, imageQuality, imageFormat, showControls, maxIndex, callback) {
+module.exports = function (url, targetDir, resolution, imageQuality, imageFormat, showControls, waitTime, maxIndex, callback) {
     var spookyOpts = {
         child: {
             transport: 'http'
@@ -28,7 +28,7 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
         testRevealVersion();
         if (!resolution) setResolution()
         configureReveal();
-        crawl(spooky, targetDir, imageFormat, imageQuality, maxIndex); 
+        crawl(spooky, targetDir, imageFormat, imageQuality, waitTime, maxIndex); 
 
         spooky.run(function () {
             this.emit('finished');

@@ -1,7 +1,8 @@
-module.exports = function (spooky, targetDir, imageFormat, imageQuality, maxIndex) {
+module.exports = function (spooky, targetDir, imageFormat, imageQuality, waitTime, maxIndex) {
     spooky.then([{ baseDir: targetDir,
                    format: imageFormat,
                    quality: imageQuality,
+                   waitTime: waitTime,
                    maxIndex: maxIndex
     }, function () {
 
@@ -100,10 +101,18 @@ module.exports = function (spooky, targetDir, imageFormat, imageQuality, maxInde
             return buildFrameId(slideIndices.h, slideIndices.v, fragmentIndex);
         }
 
-        captureFrame(this, getFrameId(this)); 
-        for (var done = false; !done; done = isPresDone(this)) { 
-            advancePres(this);
-            captureFrame(this, getFrameId(this)); 
+        var advance = function (casper, waitTime) {
+            casper.wait(waitTime, function () { 
+                captureFrame(casper, getFrameId(casper));
+                advancePres(casper);
+                if (!isPresDone(casper)) {
+                    advance(casper, waitTime); 
+                } else {
+                    captureFrame(casper, getFrameId(casper));
+                }
+            });
         }
+
+        advance(this, waitTime);
     }]);
 }

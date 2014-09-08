@@ -15,6 +15,7 @@ resolution,
 imageQuality = argv.quality || 100,
 imageFormat = argv.format || 'png',
 showControls = argv.controls || false,
+waitTime = argv.wait || 1000,
 maxIndex = argv.maxindex || 999;
 
 if ((argv.capture != argv.build) && argv.capture) {
@@ -42,6 +43,7 @@ if (mode !== 'build') {
     }
 
     if (!url || (imageFormat !== 'png' && imageFormat !== 'jpeg') ||
+      waitTime !== parseInt(waitTime) ||
       maxIndex !== parseInt(maxIndex) ||
       imageQuality !== parseInt(imageQuality)) {
         console.log('Argument error\nExample use: node revealation.js http://myrevealpres.com --format jpeg');
@@ -66,7 +68,7 @@ var builder = function () {
 }
 
 if (mode !== 'build') {
-    capture(url, targetDir, resolution, imageQuality, imageFormat, showControls, maxIndex, function(err) {
+    capture(url, targetDir, resolution, imageQuality, imageFormat, showControls, waitTime, maxIndex, function(err) {
         if (err) {
             console.log('Could not capture slides: ' + err);
             process.exit(1);
