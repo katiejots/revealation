@@ -16,7 +16,7 @@ imageQuality = argv.quality || 100,
 imageFormat = argv.format || 'png',
 showControls = argv.controls || false,
 waitTime = argv.wait || 1000,
-maxIndex = argv.maxindex || 999;
+maxIndex = argv.maxindex || 9999;
 
 if ((argv.capture != argv.build) && argv.capture) {
     mode = 'capture';

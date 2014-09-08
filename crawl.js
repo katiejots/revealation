@@ -14,12 +14,6 @@ module.exports = function (spooky, targetDir, imageFormat, imageQuality, waitTim
             });
         }
 
-        var buildFrameId = function (hSlideIndex, vSlideIndex, fragmentIndex) {
-            var slideId = padWithZeroes(hSlideIndex) + '-' + padWithZeroes(vSlideIndex);; 
-            var fragmentId = padWithZeroes(fragmentIndex);
-            return 'frame' + '-' + slideId + '-' + fragmentId;
-        };
-
         var padWithZeroes = function (num) {
             var numDigits = maxIndex.toString().length;
             if (num <= maxIndex) {
@@ -94,25 +88,20 @@ module.exports = function (spooky, targetDir, imageFormat, imageQuality, waitTim
                 nextSlide(casper);
             }
         };
-        
-        var getFrameId = function (casper) {
-            var slideIndices = getSlideIndices(casper);
-            var fragmentIndex = getFragmentIndex(casper); 
-            return buildFrameId(slideIndices.h, slideIndices.v, fragmentIndex);
-        }
 
-        var advance = function (casper, waitTime) {
+        var advance = function (casper, waitTime, frameId) {
             casper.wait(waitTime, function () { 
-                captureFrame(casper, getFrameId(casper));
+                captureFrame(casper, padWithZeroes(frameId));
+                frameId++;
                 advancePres(casper);
                 if (!isPresDone(casper)) {
-                    advance(casper, waitTime); 
+                    advance(casper, waitTime, frameId); 
                 } else {
-                    captureFrame(casper, getFrameId(casper));
+                    captureFrame(casper, padWithZeroes(frameId));
                 }
             });
         }
 
-        advance(this, waitTime);
+        advance(this, waitTime, 0);
     }]);
 }

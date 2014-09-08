@@ -29,7 +29,7 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 - `--format {png}` Format of images captured: png or jpeg
 - `--controls` Show the Reveal.js controls; defaults to false
 - `--wait` Number of milliseconds to wait for each slide/fragment to load before capture
-- `--maxindex {999}` Maximum to use for frame indices; defaults to 999
+- `--maxindex {9999}` Maximum to use for frame indices; defaults to 9999
 
 ## To Do
 
