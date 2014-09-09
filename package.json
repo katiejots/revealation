@@ -1,13 +1,14 @@
 {
   "name": "revealation",
   "version": "0.0.2",
-  "description": "Reveal.js slide crawler with PDF generation",
+  "description": "Reveal.js slide crawler to generate slide PDFs",
   "keywords": [
     "Reveal.js",
-    "PDF generation"
+    "PDF generation",
+    "presentation slides"
   ],
   "bin": {
-    "revealation": "./revealation.js" 
+    "revealation": "revealation.js" 
   },
   "author": {
     "name": "Katie Miller",
@@ -17,7 +18,7 @@
   "homepage": "http://github.com/codemiller/revealation",
   "repository": {
     "type": "git",
-    "url": "https://gitub.com/codemiller/revealation"
+    "url": "http://github.com/codemiller/revealation"
   },
   "engines": {
     "node": ">= 0.10.0",

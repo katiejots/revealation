@@ -1,22 +1,25 @@
+#!/usr/bin/env node
 /*
  * Tool to crawl a Reveal.js slide deck and capture each fragment to build a PDF.
  * Author: Katie Miller (codemiller)
  */
 
 var fs = require('fs'),
-build = require ('./build.js'),
-capture = require ('./capture.js'),
-argv = require('minimist')(process.argv.slice(2)),
-url = argv._[0],
-mode,
-targetDir = argv.target || 'output',
-outputFilename = argv.output || 'presentation',
-resolution,
-imageQuality = argv.quality || 100,
-imageFormat = argv.format || 'png',
-showControls = argv.controls || false,
-waitTime = argv.wait || 1000,
-maxIndex = argv.maxindex || 9999;
+    build = require('./build.js'),
+    capture = require('./capture.js'),
+    path = require('path'),
+    argv = require('minimist')(process.argv.slice(2)),
+    url = argv._[0],
+    mode,
+    targetDirName = argv.target || 'output',
+    targetDir = path.join(process.cwd(), targetDirName),
+    outputFilename = argv.output || 'presentation',
+    resolution,
+    imageQuality = argv.quality || 100,
+    imageFormat = argv.format || 'png',
+    showControls = argv.controls || false,
+    waitTime = argv.wait || 1000,
+    maxIndex = argv.maxindex || 9999;
 
 if ((argv.capture != argv.build) && argv.capture) {
     mode = 'capture';
@@ -27,6 +30,13 @@ if ((argv.capture != argv.build) && argv.capture) {
 } else {
     mode = 'full';
 }
+
+fs.mkdir(targetDir, '0777', function (err) {
+   if (err && err.code != 'EEXIST') {
+       console.log('Directory ' + targetDir + ' could not be created');
+       process.exit(1);
+   } 
+});
 
 if (mode !== 'build') {
     // Process command line arguments for capture
@@ -49,13 +59,6 @@ if (mode !== 'build') {
         console.log('Argument error\nExample use: node revealation.js http://myrevealpres.com --format jpeg');
         process.exit(1);
     }
-
-    fs.mkdir(targetDir, '0777', function (err) {
-       if (err && err.code != 'EEXIST') {
-           console.log('Directory ' + targetDir + ' could not be created');
-           process.exit(1);
-       } 
-    });
 }
 
 var builder = function () {
