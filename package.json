@@ -1,10 +1,10 @@
 {
-  "name": "Revealation",
+  "name": "revealation",
   "version": "0.0.2",
   "description": "Reveal.js slide crawler with PDF generation",
   "keywords": [
     "Reveal.js",
-    "PDF"
+    "PDF generation"
   ],
   "author": {
     "name": "Katie Miller",
