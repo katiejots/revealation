@@ -5,11 +5,11 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 
 ## Prerequisites
 
-- Install [PhantomJS](http://phantomjs.org) and make sure it is on your path 
+Install [PhantomJS](http://phantomjs.org) and make sure it is on your path 
 
 ## Install
 
-- `npm install -g revealation`
+`npm install -g revealation`
 
 ## Run 
 
@@ -19,11 +19,11 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 
 - `--capture` Capture the slides, but do not render to PDF
 - `--build` Skip slide capture and build a PDF from images in the target directory 
-- `--target {dir}` Directory to write the images and PDF
-- `--output {filename}` Filename for the PDF (without an extension)
+- `--target {dir}` Directory to write the images and PDF; default 'output'
+- `--output {filename}` Filename for the PDF (without an extension); default 'presentation'
 - `--resolution {1024x768}` Resolution for viewport; if unspecified, tool will use the Reveal.js slide dimensions
-- `--quality {75}` Quality of images captured, from 0 to 100
+- `--quality {75}` Quality of images captured, from 0 to 100; default 100
 - `--format {png}` Format of images captured: png or jpeg
-- `--controls` Show the Reveal.js controls; defaults to false
-- `--wait` Number of milliseconds to wait for each slide/fragment to load before capture
-- `--maxindex {9999}` Maximum to use for frame indices; defaults to 9999
+- `--controls` Show the Reveal.js controls; default false
+- `--wait` Number of milliseconds to wait for each slide/fragment to load before capture; default 1000
+- `--maxindex {9999}` Maximum to use for frame indices; default 9999

@@ -8,7 +8,7 @@
   ],
   "bin": {
     "revealation": "./revealation.js" 
-  }
+  },
   "author": {
     "name": "Katie Miller",
     "email": "katie@codemiller.com",
