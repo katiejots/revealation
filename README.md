@@ -9,11 +9,11 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 
 ## Install
 
-- `npm install revealation`
+- `npm install -g revealation`
 
 ## Run 
 
-`node revealation.js http://myrevealpres.com`
+`revealation http://myrevealpres.com`
 
 ## Options 
 
