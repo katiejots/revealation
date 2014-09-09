@@ -1,6 +1,6 @@
 {
   "name": "revealation",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Reveal.js slide crawler to generate slide PDFs",
   "keywords": [
     "Reveal.js",
@@ -21,7 +21,7 @@
     "url": "http://github.com/codemiller/revealation"
   },
   "scripts": {
-    "preinstall": "npm i -g casper@0.0.1 phantomjs@1.9.7-15"
+    "preinstall": "npm i -g casper@~0.0.1 phantomjs@~1.9.7-15"
   },
   "engines": {
     "node": ">= 0.10.0",
