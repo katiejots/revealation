@@ -1,9 +1,5 @@
 var crawl = require('./crawl.js');
-try {
-    var Spooky = require('spooky');
-} catch (e) {
-    var Spooky = require('../lib/spooky');
-}
+var Spooky = require('spooky');
 
 module.exports = function (url, targetDir, resolution, imageQuality, imageFormat, showControls, waitTime, maxIndex, callback) {
     var spookyOpts = {
@@ -32,7 +28,7 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
 
         spooky.run(function () {
             this.emit('finished');
-            this.exit();
+            this.exit(0);
         });
     });
 
