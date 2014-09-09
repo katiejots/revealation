@@ -5,14 +5,11 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 
 ## Prerequisites
 
-- Install NodeJS and make sure it is on your path
 - Install [PhantomJS](http://phantomjs.org) and make sure it is on your path 
 
 ## Install
 
-- `git clone git@github.com:codemiller/revealation.git`
-- `cd revealation`
-- `npm install --dependencies`
+- `npm install revealation`
 
 ## Run 
 
@@ -30,11 +27,3 @@ This is a tool to help capture a [Reveal.js](https://github.com/hakimel/reveal.j
 - `--controls` Show the Reveal.js controls; defaults to false
 - `--wait` Number of milliseconds to wait for each slide/fragment to load before capture
 - `--maxindex {9999}` Maximum to use for frame indices; defaults to 9999
-
-## To Do
-
-- Improve the capture of CSS animations
-- Capture more than one frame of any included GIFs
-- Capture CSS transitions on fragments (ones like 'grow' and 'shrink')
-- Have an output PDF with selectable text
-- Make it work with older versions of Reveal.js
