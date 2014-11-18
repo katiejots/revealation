@@ -42,12 +42,12 @@ var argv = require('yargs')
         describe: 'Quality of images captured'
       })
       .options('build', {
-        default: true,
+        default: false,
         boolean: true,
         describe: 'Skip slide capture and build a PDF from images in the target directory'
       })
       .options('capture', {
-        default: true,
+        default: false,
         boolean: true,
         describe: 'Capture the slides, but do not render to PDF'
       })
@@ -70,6 +70,8 @@ var argv = require('yargs')
         }
       })
       .usage('Save Reveal.js as PDF.\nUsage: $0 http://myrevealpres.com')
+      .example('$0 http://myrevealpres.com --capture', 'downloads the slides only')
+      .example('$0 http://myrevealpres.com --build', 'renders the PDF only')
       .demand(1, 'Reveal.js URL needs to be provided as an argument.')
       .strict()
       .argv;
@@ -77,6 +79,7 @@ var argv = require('yargs')
 var targetDir = path.join(process.cwd(), argv.target);
 var resolution = null;
 var url = argv._[0];
+var buildAndCatpure = argv.capture === false && argv.build === false;
 
 fs.mkdir(targetDir, function (err) {
    if (err && err.code !== 'EEXIST') {
@@ -93,13 +96,17 @@ if (argv.resolution) {
 
 require('async').waterfall([
   function captureStep(done){
-    if (!argv.capture){
+    if (!argv.capture && !buildAndCatpure){
       return done();
     }
 
     capture(url, targetDir, resolution, argv.quality, argv.format, argv.controls, argv.waitTime, argv.maxIndex, done);
   },
   function buildStep(done){
+    if (!argv.build && !buildAndCatpure){
+      return done();
+    }
+
     build(targetDir, argv.output, argv.format, done);
   }
 ]);
