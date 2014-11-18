@@ -2,6 +2,11 @@ var crawl = require('./crawl.js');
 var Spooky = require('spooky');
 
 module.exports = function (url, targetDir, resolution, imageQuality, imageFormat, showControls, waitTime, maxIndex, callback) {
+    var env = process.env;
+
+    // forwarding the path towards the local copy of PhantomJS
+    env.PHANTOMJS_EXECUTABLE = require.resolve('casperjs/node_modules/.bin/phantomjs');
+
     var spookyOpts = {
         child: {
             transport: 'http'
@@ -12,7 +17,10 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
             viewportSize: resolution ? resolution : null
         },
         child: {
-            command: require.resolve('casperjs/bin/casperjs')
+            command: require.resolve('casperjs/bin/casperjs'),
+            spawnOptions: {
+                env: env
+            }
         }
     };
 
