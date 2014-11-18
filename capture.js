@@ -9,7 +9,10 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
         casper: {
             logLevel: 'debug',
             verbose: true,
-            viewportSize: resolution ? resolution : null 
+            viewportSize: resolution ? resolution : null
+        },
+        child: {
+            command: require.resolve('casperjs/bin/casperjs')
         }
     };
 
@@ -19,12 +22,12 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
             e.details = err;
             throw e;
         }
-         
+
         spooky.start(url);
         testRevealVersion();
         if (!resolution) setResolution()
         configureReveal();
-        crawl(spooky, targetDir, imageFormat, imageQuality, waitTime, maxIndex); 
+        crawl(spooky, targetDir, imageFormat, imageQuality, waitTime, maxIndex);
 
         spooky.run(function () {
             this.emit('finished');
@@ -50,7 +53,7 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
     });
 
     spooky.on('finished', function () {
-        callback(null); 
+        callback(null);
     });
 
     var testRevealVersion = function () {
@@ -85,11 +88,11 @@ module.exports = function (url, targetDir, resolution, imageQuality, imageFormat
 
     var configureReveal = function () {
         spooky.thenEvaluate([{
-            showControls: showControls 
+            showControls: showControls
         }, function (showControls) {
-            Reveal.configure({ controls: showControls, 
+            Reveal.configure({ controls: showControls,
                                transition: 'none',
-                               rollingLinks: false });    
+                               rollingLinks: false });
         }]);
     }
 }
