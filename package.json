@@ -1,6 +1,6 @@
 {
   "name": "revealation",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "Reveal.js slide crawler to generate slide PDFs",
   "keywords": [
     "Reveal.js",
