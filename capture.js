@@ -1,11 +1,16 @@
 var crawl = require('./crawl.js');
 var Spooky = require('spooky');
+var path = require('path');
 
 module.exports = function (url, targetDir, resolution, imageQuality, imageFormat, showControls, waitTime, maxIndex, callback) {
     var env = process.env;
 
-    // forwarding the path towards the local copy of PhantomJS
-    env.PHANTOMJS_EXECUTABLE = require.resolve('casperjs/node_modules/.bin/phantomjs');
+    // forwarding npm@2 and npm@3 modules paths to help Casper find PhantomJS
+    env.PATH = [
+      path.join(__dirname, 'node_modules', '.bin'),  // npm@3
+      path.join(__dirname, 'node_modules', 'casperjs', '.bin'),  // npm@2
+      env.PATH
+    ].join(path.delimiter);
 
     var spookyOpts = {
         child: {
